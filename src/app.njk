@@ -1,0 +1,114 @@
+---
+layout: layouts/base.njk
+---
+
+<section class="sm:mt-6 lg:mt-8 mt-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid md:grid-cols-2 gap-4">
+
+<div x-data="temperatureChart()" x-init="initChart()">
+  <h2>Wykres temperatury</h2>
+  <canvas x-ref="chartCanvas" id="temperatureChart" width="400" height="200"></canvas>
+</div>
+
+<div x-data="humidityChart()" x-init="initChart()">
+  <h2>Wykres wilgotności</h2>
+  <canvas x-ref="chartCanvas" id="humidityChart" width="400" height="200"></canvas>
+</div>
+
+</div>
+</section>
+
+  <style>
+    canvas {
+      width: 100%;
+      height: auto;
+      max-height: 400px; /* Ograniczenie maksymalnej wysokości */
+      display: block;
+      box-sizing: border-box;
+    }
+  </style>
+
+  <script>
+    function temperatureChart() {
+      return {
+        chart: null,
+        initChart() {
+          const ctx = this.$refs.chartCanvas.getContext('2d');
+          const data = {
+            labels: ['2 grudnia', '3 grudnia', '4 grudnia', '5 grudnia', '6 grudnia', '7 grudnia', '8 grudnia'],
+            datasets: [{
+              label: 'Temperatura (°C)',
+              data: [4.2, 2.4, 5.0, 2.6, 2.1, 1.9, 3.0],
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              tension: 0.4,
+              borderWidth: 1
+            }]
+          };
+          const options = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          };
+          this.chart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: options
+          });
+        }
+      }
+    }
+
+    function humidityChart() {
+      return {
+        chart: null,
+        initChart() {
+          const ctx = this.$refs.chartCanvas.getContext('2d');
+          const data = {
+            labels: ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'],
+            datasets: [{
+              label: 'Wilgotność (%)',
+              data: [80, 72, 68, 75, 78, 82, 85],
+              borderColor: 'rgba(75, 192, 192, 1)',
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4
+            }]
+          };
+          const options = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top'
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: (value) => `${value}%`
+                }
+              },
+              x: {
+                ticks: {
+                  maxRotation: 0
+                }
+              }
+            }
+          };
+          this.chart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: options
+          });
+        }
+      };
+    }
+  </script>

@@ -1,0 +1,109 @@
+---
+layout: layouts/base.njk
+---
+
+<section class="sm:mt-6 lg:mt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="font-bold text-3xl md:text-5xl mb-12 w-full max-w-4xl"> Schowek z użyciem localStorage</h2>
+</section>
+
+<section class="sm:mt-6 lg:mt-8 mt-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid md:grid-cols-2 gap-4">
+
+        <!-- Główna atrakcja -->
+        <div class="single-storage p-12 rounded-3xl shadow-md bg-white" data-id="1">
+            <h3 class="single-storage-title text-3xl font-bold">Element</h3>
+                <div class="w-full border-b border-gray mt-6 mb-8"></div>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="text-xl content-center">Cena za szt: 
+                <span id="storage-price-to-calc" class="font-bold">50</span> zł
+                 </div>
+                <div>
+                    <label>
+             Ilość:
+             <input type="number" id="storage-people-count" min="1" value="1" 
+             class="border border-gray-300 rounded-md p-2" x-model="peopleCount" @input="updatePrice">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dodatkowe atrakcje -->
+        <div class="additional-storages p-12 rounded-xl shadow-md bg-white">
+            <h4 class="text-3xl font-bold">Dodatki</h4>
+            <div class="w-full border-b border-gray mt-6 mb-8"></div>
+            <template x-for="(extra, index) in availableExtras" :key="index">
+                <div class="more-storage-item grid grid-cols-2 gap-4 justify-center mb-4">
+                    <div>
+                    <h3 class="more-storage-title text-xl font-medium" x-text="extra.name"></h3>
+                    <p class="text-gray-500">Cena: <span x-text="extra.price"></span> zł</p>
+                    </div>
+                    <div>
+                    <button @click="addExtra(extra)" 
+                  class="bg-blue-500 text-white rounded-md px-4 py-2 mt-2 hover:bg-blue-600">
+                  Dodaj
+               </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <!-- Suma -->
+        <div class="p-12 rounded-xl shadow-md bg-white">
+         <div class="grid md:grid-cols-2 gap-4">
+                     <div class="text-2xl font-bold">Suma: <span x-text="totalPrice.toFixed(2)"></span> zł</div>
+            <button @click="addAttractionToCart()" 
+            class="bg-green-500 text-white rounded-md px-4 py-2 hover:bg-green-600">
+            Dodaj do schowka
+         </button>
+         </div>
+        </div>
+
+    </div>
+
+    <!-- Modal -->
+    <div x-show="showModal" x-cloak
+      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+      @click.away="showModal = true"
+      x-transition>
+        <div class="bg-white shadow-xl rounded-lg p-6 w-full max-w-lg">
+            <h2 class="text-2xl font-bold mb-4">Schowek</h2>
+            <template x-if="cart.length === 0">
+                <p>Schowek jest pusty</p>
+            </template>
+            <template x-for="(item, index) in cart" :key="index">
+                <div class="cart-item border-b border-gray-300 pb-4 mb-4">
+                    <h4 class="text-lg font-bold" x-text="item.name"></h4>
+                    <ul class="list-none p-0 m-2">
+                        <template x-for="extra in item.extras" :key="extra.name">
+                            <li x-text="`${extra.name} - ${extra.price} zł`"></li>
+                        </template>
+                    </ul>
+                    <p>Cena: <span x-text="item.price.toFixed(2)"></span> zł</p>
+                    <button @click="removeFromCart(index)" 
+                  class="text-red-500 font-semibold hover:underline">
+                  Usuń
+               </button>
+                </div>
+            </template>
+            <div id="total" class="text-lg font-medium">Łączna cena: <span x-text="total.toFixed(2)"></span> zł</div>
+            <button @click="showModal = false" 
+            class="bg-red-500 text-white rounded-md px-4 py-2 mt-4 hover:bg-red-600">
+            Zamknij
+         </button>
+        </div>
+    </div>
+
+    <!-- Alert -->
+    <div x-show="showAlert"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-300"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 translate-y-2"
+        class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-md"
+        x-cloak>
+       Dodano do schowka!
+   </div>
+
+</section>
